@@ -1,9 +1,9 @@
 'use strict';
 
-const Hapi = require('hapi');
-const server = new Hapi.Server();
+const Hapi      = require('hapi');
+const server    = new Hapi.Server();
 
-var routes = require('./routes/home');
+const routes    = require('./routes/home');
 
 /**
 * here we define the connection attributes of our server
@@ -40,6 +40,7 @@ server.register({
 */
 server.start((error) => {
 
+  // thorw an error if any ocurred during the server startup
   if (error){
     throw error;
   }

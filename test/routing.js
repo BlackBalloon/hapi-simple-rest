@@ -121,7 +121,8 @@ describe('Routing tests of the application', function(){
       .end(function(error, response){
         if (error) return done(error);
 
-        console.log(response.body);
+        expect(response.body).to.have.property('message');
+        expect(response.body.message).to.equal('Specified user was deleted');
 
         done()
       });
