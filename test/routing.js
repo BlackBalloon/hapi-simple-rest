@@ -87,4 +87,43 @@ describe('Routing tests of the application', function(){
         done();
       });
   });
+
+  it('should update user with specified id', function(done){
+
+    var data = {
+      username: 'alex',
+      email: 'alex@example.com'
+    }
+
+    request(url)
+      .put('/users/1')
+      .send(data)
+      .expect(200)
+      .end(function(error, response) {
+        if (error) {
+          return done(error);
+        }
+
+        expect(response.body.user).to.be.an('object');
+        expect(response.body.user.id).to.equal(1);
+        expect(response.body.user.username).to.equal(data.username);
+        expect(response.body.user.email).to.equal(data.email);
+
+        done()
+      });
+  });
+
+  it('should delete user with specified id', function(done){
+
+    request(url)
+      .delete('/users/1')
+      .expect(200)
+      .end(function(error, response){
+        if (error) return done(error);
+
+        console.log(response.body);
+
+        done()
+      });
+  });
 });

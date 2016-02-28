@@ -66,9 +66,6 @@ var homeRoute = function(server, options, next){
 
       config: {
         description: 'Return all users',
-        /*
-        * return all users
-        */
         handler: function(request, reply) {
           reply({
             users: users
@@ -87,16 +84,20 @@ var homeRoute = function(server, options, next){
     config: {
       description: 'Return user with ID specified as path parameter',
       handler: function(request, reply) {
-        /*
-        * in this example we return user with specified ID
-        */
         if (typeof request.params.id !== 'undefined') {
           var user = users.filter(function(currentUser){
             return currentUser.id == request.params.id;
-          });
-          reply({ user: user[0] })
+          })[0];
+
+          // if there is no user with specified id, return message with code 404
+          if (typeof user === 'undefined') {
+            return reply({ message: 'Specified user does not exist' }).code(404)
+          }
+
+          reply({ user: user })
         } else {
-          reply('You need to specify the user ID!');
+          // if the id wasnt specified, return proper message with code 400
+          reply({ message: 'You need to specify the user ID' }).code(400);
         }
       }
     }
@@ -127,7 +128,7 @@ var homeRoute = function(server, options, next){
           email: request.payload.email
         }
 
-        /* here we find current user with highest ID value */
+        // here we find current user with highest ID value
         var highestIdUser = users[0];
         users.forEach(function(user) {
           if (user.id > highestIdUser.id) {
@@ -135,14 +136,97 @@ var homeRoute = function(server, options, next){
           }
         });
 
-        /* add the 'id' property to newly created user with value 'max + 1' */
+        // add the 'id' property to newly created user with value 'max + 1'
         newUser.id = highestIdUser.id + 1;
         users.push(newUser);
 
         reply({ user: newUser });
       }
     }
-  })
+  });
+
+  /**
+  * Route defining path for updating user with specified ID.
+  * As well as in the previous case, the Joi package will be used
+  * in order to validate the request payload.
+  **/
+  server.route({
+    method: 'PUT',
+    path: '/users/{id}',
+
+    config: {
+      description: 'Update user with specified ID',
+      validate: {
+        payload: {
+          username: Joi.string().optional(),
+          email: Joi.string().email().optional()
+        }
+      },
+
+      handler: function(request, reply) {
+        if (typeof request.params.id !== 'undefined') {
+          var user = users.filter(function(currentUser){
+            return currentUser.id == request.params.id;
+          })[0];
+
+          // if there is no user with specified id, return message with code 404
+          if (typeof user === 'undefined') {
+            return reply({ message: 'Specified user does not exist' }).code(404)
+          }
+
+          // check if new 'username' was passed in the payload
+          if (typeof request.payload.username !== 'undefined') {
+            user.username = request.payload.username;
+          }
+
+          // check if new 'email' was passed in the payload
+          if (typeof request.payload.email !== 'undefined') {
+            user.email = request.payload.email;
+          }
+
+          reply({ user: user });
+        } else {
+          // if the id wasnt specified, return proper message with code 400
+          reply({ message: 'You need to specify the user ID' }).code(400);
+        }
+      }
+    }
+  });
+
+  /**
+  * Route defining path for deleting user with specified id.
+  **/
+  server.route({
+    method: 'DELETE',
+    path: '/users/{id}',
+
+    config: {
+      description: 'Delete user with specified id',
+      handler: function(request, reply) {
+        if (typeof request.params.id !== 'undefined') {
+          var deleted = false;
+
+          // here we find user with id matching the request.params.id
+          // if the user is found, we splice the array of users at given index
+          // and set the 'deleted' variable to true in order to define the result
+          for( var i = users.length - 1; i >= 0; i-- ) {
+            if ( users[i].id == request.params.id ) {
+              deleted = true;
+              users.splice(i, 1);
+            }
+          }
+
+          if (deleted) {
+            reply({ message: 'Specified user was deleted' });
+          } else {
+            reply({ message: 'Specified user does not exist' }).code(404);
+          }
+        } else {
+          reply({ message: 'You need to specify the user ID' }).code(400);
+        }
+      }
+    }
+  });
 
   next();
 }
