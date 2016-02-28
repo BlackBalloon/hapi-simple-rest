@@ -62,4 +62,29 @@ describe('Routing tests of the application', function(){
         done();
       });
   });
+
+  it('should add new user', function(done) {
+
+    var data = {
+      username: 'frank',
+      email: 'frank@example.com'
+    }
+
+    request(url)
+      .post('/users')
+      .send(data)
+      .expect(200)
+      .end(function(error, response) {
+        if (error) {
+          return done(error);
+        }
+
+        expect(response.body.user).to.be.an('object')
+        expect(response.body.user.id).to.equal(4);
+        expect(response.body.user.username).to.equal(data.username);
+        expect(response.body.user.email).to.equal(data.email);
+
+        done();
+      });
+  });
 });
