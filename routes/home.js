@@ -42,6 +42,21 @@ var homeRoute = function(server, options, next){
   */
 
   /**
+  * Basic route which should return a simple string as the response
+  **/
+  server.route({
+    method: 'GET',
+    path: '/home',
+
+    config: {
+      description: 'Return simple string',
+      handler: function(request, reply) {
+        reply({ message: 'Exemplary string from RESTful web service' });
+      }
+    }
+  });
+
+  /**
   * Route defining path for retrieving array of all users
   **/
   server.route({
@@ -49,7 +64,7 @@ var homeRoute = function(server, options, next){
       path: '/users',
 
       config: {
-        description: 'Return all users'
+        description: 'Return all users',
         /*
         * return all users
         */
@@ -69,7 +84,7 @@ var homeRoute = function(server, options, next){
     path: '/users/{id}',
 
     config: {
-      description: 'Return user with ID specified as path parameter'
+      description: 'Return user with ID specified as path parameter',
       handler: function(request, reply) {
         /*
         * in this example we return user with specified ID
