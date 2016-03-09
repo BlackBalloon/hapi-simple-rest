@@ -10,7 +10,7 @@ const url             = 'http://localhost:3000';
 
 describe('Routing tests of the application', function(){
 
-  it('should return string from /home path', function(done){
+  it('GET on /home path', function(done){
 
     request(url)
       .get('/home')
@@ -26,7 +26,7 @@ describe('Routing tests of the application', function(){
       });
   });
 
-  it('should return list of users', function(done){
+  it('GET on /users to return all users', function(done){
 
     request(url)
       .get('/users')
@@ -44,7 +44,7 @@ describe('Routing tests of the application', function(){
       });
   });
 
-  it('should return user with specified id', function(done){
+  it('GET on /users/2 to return specified user', function(done){
 
     request(url)
       .get('/users/2')
@@ -63,7 +63,7 @@ describe('Routing tests of the application', function(){
       });
   });
 
-  it('should add new user', function(done) {
+  it('POST on /users to add new user', function(done) {
 
     var data = {
       username: 'frank',
@@ -73,7 +73,7 @@ describe('Routing tests of the application', function(){
     request(url)
       .post('/users')
       .send(data)
-      .expect(200)
+      .expect(201)
       .end(function(error, response) {
         if (error) {
           return done(error);
@@ -88,7 +88,7 @@ describe('Routing tests of the application', function(){
       });
   });
 
-  it('should update user with specified id', function(done){
+  it('PUT on /users/1 to update user', function(done){
 
     var data = {
       username: 'alex',
@@ -113,7 +113,7 @@ describe('Routing tests of the application', function(){
       });
   });
 
-  it('should delete user with specified id', function(done){
+  it('DELETE on /users/1 to delete user', function(done){
 
     request(url)
       .delete('/users/1')
