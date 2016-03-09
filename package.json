@@ -1,0 +1,19 @@
+{
+  "name": "rest_hapi",
+  "version": "1.0.0",
+  "description": "Exemplary project presenting how to create RESTful web service with Hapi.js framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "node_modules/.bin/mocha -R spec"
+  },
+  "author": "piotr.bienias@blackballoon.pl",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "^3.5.0",
+    "hapi": "^13.0.0",
+    "joi": "^8.0.3",
+    "mocha": "^2.4.5",
+    "supertest": "^1.2.0",
+    "underscore": "^1.8.3"
+  }
+}
