@@ -48,7 +48,7 @@ var homeRoute = function(server, options, next){
   **/
   server.route({
     method: 'GET',
-    path: '/home',
+    path: '/',
 
     config: {
       description: 'Return simple string',
@@ -200,23 +200,15 @@ var homeRoute = function(server, options, next){
         }
       },
       handler: function(request, reply) {
-        var deleted = false;
-
         // here we find user with id matching the request.params.id
         // if the user is found, we splice the array of users at given index
-        // and set the 'deleted' variable to true in order to define the result
         for( var i = users.length - 1; i >= 0; i-- ) {
           if ( users[i].id == request.params.id ) {
-            deleted = true;
             users.splice(i, 1);
+            return reply({ message: 'Specified user was deleted' });
           }
         }
-
-        if (deleted) {
-          reply({ message: 'Specified user was deleted' });
-        } else {
-          reply({ message: 'Specified user does not exist' }).code(404);
-        }
+        reply({ message: 'Specified user does not exist' }).code(404);
       }
     }
   });

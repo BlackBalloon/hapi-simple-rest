@@ -10,10 +10,10 @@ const url             = 'http://localhost:3000';
 
 describe('Routing tests of the application', function(){
 
-  it('GET on /home path', function(done){
+  it('GET on / path', function(done){
 
     request(url)
-      .get('/home')
+      .get('/')
       .expect(200)
       .end(function(error, response) {
         if (error) {
