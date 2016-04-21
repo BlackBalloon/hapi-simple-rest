@@ -4,6 +4,8 @@ const Hapi      = require('hapi');
 const server    = new Hapi.Server();
 
 const routes    = require('./routes/home');
+const daoRoutes = require('./routes/daoRoutes');
+const UserDAO   = require('./dao/user');
 
 /**
 * here we define the connection attributes of our server
@@ -24,14 +26,21 @@ server.connection({
 * @attribute {function} register - defines the function as plugin
 * @attribute {object} options - object passed to the plugin function's constructor
 */
-server.register({
-  register: routes,
-  options: {},
-}, (error) => {
+server.register(
+  [
+    {
+      register: routes,
+      options: {},
+    },
+    {
+      register: daoRoutes,
+      options: {}
+    }
+  ], (error) => {
 
-  if (error) {
-    console.log('Routes plugin registration failed!');
-  }
+    if (error) {
+      console.log('Routes plugin registration failed!');
+    }
 
 });
 
