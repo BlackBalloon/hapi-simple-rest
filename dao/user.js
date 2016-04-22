@@ -2,6 +2,7 @@
 
 const knexConfiguration = require('../knexfile')[process.env.NODE_ENV];
 const knex = require('knex')(knexConfiguration);
+const bcrypt = require('bcrypt');
 
 const User = require('../models/user');
 
@@ -29,13 +30,16 @@ class UserDAO {
     });
   }
 
-  create(username, email) {
-    return knex('users').insert({ username: username, email: email })
+  create(data) {
+    if (data.password) {
+      data.password = bcrypt.hashSync(data.password, 10);
+    }
+
+    return knex('users').insert(data)
       .returning('*')
       .then(function(result){
         return new User(result[0].id, result[0].username, result[0].email);
       }).catch(function(error){
-        console.log(error);
         throw error;
       });
   }
@@ -55,8 +59,26 @@ class UserDAO {
     return knex('users').where({ id: id }).del().then(function(deletedRows){
       return deletedRows;
     }).catch(function(error){
+      console.log(error);
       throw error;
     })
+  }
+
+  validatePassword(data) {
+    return knex('users').where({ username: data.username }).select('*').then(function(result) {
+      if (result.length === 1) {
+        var comparePassword = bcrypt.compareSync(data.password, result[0].password);
+        if (comparePassword) {
+          return result[0].id;
+        } else {
+          throw { username: 'Wrong username or password', password: 'Wrong username or password' };
+        }
+      }
+      
+      throw { username: 'Wrong username or password', password: 'Wrong username or password' };
+    }).catch(function(error) {
+      throw error;
+    });
   }
 
 }

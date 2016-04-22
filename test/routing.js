@@ -10,6 +10,7 @@ chai.should();
 const expect          = chai.expect;
 
 const url             = 'http://localhost:3000';
+let authToken = null;
 
 describe('DAO routing tests of the application', function(){
 
@@ -23,11 +24,34 @@ describe('DAO routing tests of the application', function(){
     });
   });
 
+  it('POST on /login', function(done) {
+
+    var data = {
+      username: 'pbienias',
+      password: 'password'
+    };
+
+    request(url)
+      .post('/login')
+      .send(data)
+      .end(function(error, response) {
+        if (error) {
+          return done(error);
+        }
+
+        authToken = response.body.token;
+
+        done();
+      });
+
+  });
+
   it('GET on /dao/users', function(done){
 
     request(url)
       .get('/dao/users')
       .expect(200)
+      .set('Authorization', authToken)
       .end(function(error, response){
         if (error) {
           return done(error);
@@ -78,7 +102,8 @@ describe('DAO routing tests of the application', function(){
 
     var data = {
       username: 'pbienias',
-      email: 'pbienias@gmail.com'
+      email: 'pbienias@gmail.com',
+      password: 'password'
     };
 
     request(url)
@@ -135,6 +160,24 @@ describe('DAO routing tests of the application', function(){
         }
 
         expect(response.body.deletedRows).to.equal(1);
+
+        done();
+      });
+
+  });
+
+  it('POST on /logout', function(done) {
+
+    request(url)
+      .post('/logout')
+      .expect(200)
+      .set('Authorization', authToken)
+      .end(function(error, response) {
+        if (error) {
+          return done(error);
+        }
+
+        console.log(response.body);
 
         done();
       });

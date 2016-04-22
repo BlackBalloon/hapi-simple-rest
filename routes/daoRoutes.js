@@ -20,7 +20,7 @@ var daoRoutes = function(server, options, next) {
           reply(users);
         }).catch(function(error) {
           reply({ message: 'Error during operation' }).code(400);
-        })
+        });
       }
     }
   });
@@ -44,7 +44,7 @@ var daoRoutes = function(server, options, next) {
           reply({ message: 'Specified user does not exist' }).code(404);
         }).catch(function(error) {
           reply({ message: 'Error during operation' }).code(400);
-        })
+        });
       }
     }
   });
@@ -59,17 +59,18 @@ var daoRoutes = function(server, options, next) {
       validate: {
         payload: {
           username: Joi.string().required(),
-          email: Joi.string().email().required()
+          email: Joi.string().email().required(),
+          password: Joi.string().required()
         },
         options: { stripUnknown: true }
       },
 
       handler: function(request, reply) {
-        userDao.create(request.payload.username, request.payload.email).then(function(user){
+        userDao.create(request.payload).then(function(user){
           reply(user).code(201);
         }).catch(function(error) {
           reply({ message: 'Error during create' }).code(400);
-        })
+        });
       }
     }
   });

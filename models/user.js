@@ -1,17 +1,20 @@
 'use strict';
 
+const bcrypt      = require('bcrypt');
 
-const _id = Symbol('id');
-const _username = Symbol('username');
-const _email = Symbol('email');
+const _id         = Symbol('id');
+const _username   = Symbol('username');
+const _email      = Symbol('email');
+const _password   = Symbol('password');
 
 
 class User {
 
-  constructor(id, username, email) {
+  constructor(id, username, email, password) {
     this[_id] = id;
     this[_username] = username;
     this[_email] = email;
+    this[_password] = password;
   }
 
   get id() {
@@ -36,6 +39,14 @@ class User {
 
   set email(email) {
     this[_email] = email;
+  }
+
+  get password() {
+    return this[_password];
+  }
+
+  set password(password) {
+    this[_password] = bcrypt.hashSync(password, 10);
   }
 
   toString() {

@@ -3,9 +3,12 @@
 const Hapi      = require('hapi');
 const server    = new Hapi.Server();
 
-const routes    = require('./routes/home');
-const daoRoutes = require('./routes/daoRoutes');
-const UserDAO   = require('./dao/user');
+const routes      = require('./routes/home');
+const daoRoutes   = require('./routes/daoRoutes');
+const authRoutes  = require('./routes/auth');
+const UserDAO     = require('./dao/user');
+
+const authFunc    = require('./auth').authorization;
 
 /**
 * here we define the connection attributes of our server
@@ -28,6 +31,14 @@ server.connection({
 */
 server.register(
   [
+    {
+      register: require('hapi-auth-jwt2'),
+      options: {}
+    },
+    {
+      register: authRoutes,
+      options: {}
+    },
     {
       register: routes,
       options: {},
